@@ -60,6 +60,7 @@ jobs:
       runs-on: ubuntu-latest
       environment:
         name: ${{ inputs.env || 'qa' }}
+      timeout-minutes: 720
   
       steps:
         - name: Checkout
