@@ -1,0 +1,318 @@
+apiVersion: core.matrixone-cloud/v1alpha1
+kind: Cluster
+metadata:
+  annotations:
+    cos.matrixone.cloud/sync-local-service: "2026-04-08T04:29:29Z"
+    matrixone.cloud/current-account-state: OPEN
+    matrixone.cloud/enable-aksk-authorize: "true"
+    matrixone.cloud/sys-reset: "true"
+  creationTimestamp: "2026-02-14T04:14:19Z"
+  generation: 73
+  labels:
+    matrixone.cloud/role: root
+  name: freetier-01
+  resourceVersion: "990833879"
+  uid: 9c84028f-2ebd-4f7e-b53a-e8cfc1a5776b
+spec:
+  cnPools:
+  - managed:
+      config: |
+        [cn]
+        auto-upgrade = false
+        [cn.frontend]
+        saveQueryResult = "on"
+        queryResultTimeout = 72
+        lengthOfQueryPrinted = 10000
+        disable-select-into = true
+        [cn.txn]
+        max-active = 300
+        enable-leak-check = 1
+        max-active-ages = "2m"
+        [observability]
+        metricUpdateStorageUsageInterval = "5m"
+        enableStmtMerge = true
+        enableMetricToProm = true
+        [observability.labelSelector]
+        role = "__MO_OB__"
+        [observability.cu]
+        cu_unit = 1.0282717120e-06
+        cpu_price = 7.84e-14
+        mem_price = 4.48e-24
+        io_in_price = 1e-06
+        io_out_price = 1e-06
+        traffic_price_0 = 9.19e-11
+        traffic_price_1 = 0
+        traffic_price_2 = 9.19e-11
+        [observability.cu_v1]
+        cu_unit = 1.0026988039e-06
+        cpu_price = 7.43e-14
+        mem_price = 6.79e-24
+        io_in_price = 1e-06
+        io_out_price = 1e-06
+        traffic_price_0 = 9.19e-11
+        traffic_price_1 = 0
+        traffic_price_2 = 9.19e-11
+      nodeSelector:
+        matrixone.cloud/cluster-pool: freetier-01
+        matrixone.cloud/profile: cn.tiny
+      resources:
+        limits:
+          cpu: "1"
+          memory: 2Gi
+        requests:
+          cpu: "1"
+          memory: 2Gi
+      storageClassName: alicloud-disk-essd-pl1
+      storageSize: 300Gi
+      toleratedTaints:
+      - profile.matrixone.cloud/cn.tiny
+      - cluster-pool.matrixone.cloud/freetier-01
+    name: limited
+    poolStrategy:
+      scaleStrategy:
+        maxIdle: 0
+      updateStrategy:
+        reclaimTimeout: 24h0m0s
+    profile: cn.tiny
+  - managed:
+      config: |
+        [cn]
+        auto-upgrade = false
+        [cn.frontend]
+        saveQueryResult = "on"
+        queryResultTimeout = 72
+        lengthOfQueryPrinted = 10000
+        disable-select-into = true
+        [cn.txn]
+        max-active = 300
+        enable-leak-check = 1
+        max-active-ages = "20s"
+        [observability]
+        metricUpdateStorageUsageInterval = "5m"
+        enableStmtMerge = true
+        enableMetricToProm = true
+        [observability.labelSelector]
+        role = "__MO_OB__"
+        [observability.cu]
+        cu_unit = 1.0282717120e-06
+        cpu_price = 7.84e-14
+        mem_price = 4.48e-24
+        io_in_price = 1e-06
+        io_out_price = 1e-06
+        traffic_price_0 = 9.19e-11
+        traffic_price_1 = 0
+        traffic_price_2 = 9.19e-11
+        [observability.cu_v1]
+        cu_unit = 1.0026988039e-06
+        cpu_price = 7.43e-14
+        mem_price = 6.79e-24
+        io_in_price = 1e-06
+        io_out_price = 1e-06
+        traffic_price_0 = 9.19e-11
+        traffic_price_1 = 0
+        traffic_price_2 = 9.19e-11
+      nodeSelector:
+        matrixone.cloud/cluster-pool: freetier-01
+        matrixone.cloud/profile: cn.s2
+      resources:
+        limits:
+          cpu: "15"
+          memory: 250Gi
+        requests:
+          cpu: "2"
+          memory: 16Gi
+      storageClassName: openebs-hostpath
+      storageSize: 1800Gi
+      toleratedTaints:
+      - profile.matrixone.cloud/cn.s2
+      - cluster-pool.matrixone.cloud/freetier-01
+    name: s2
+    poolStrategy:
+      scaleStrategy:
+        maxIdle: 0
+      updateStrategy:
+        reclaimTimeout: 24h0m0s
+    profile: cn.s2
+  - managed:
+      config: |
+        [cn]
+        auto-upgrade = false
+        [cn.frontend]
+        saveQueryResult = "on"
+        queryResultTimeout = 72
+        lengthOfQueryPrinted = 10000
+        disable-select-into = true
+        [cn.txn]
+        max-active = 300
+        enable-leak-check = 1
+        max-active-ages = "20s"
+        [observability]
+        metricUpdateStorageUsageInterval = "5m"
+        enableStmtMerge = true
+        enableMetricToProm = true
+        [observability.labelSelector]
+        role = "__MO_OB__"
+        [observability.cu]
+        cu_unit = 1.0282717120e-06
+        cpu_price = 7.84e-14
+        mem_price = 4.48e-24
+        io_in_price = 1e-06
+        io_out_price = 1e-06
+        traffic_price_0 = 9.19e-11
+        traffic_price_1 = 0
+        traffic_price_2 = 9.19e-11
+        [observability.cu_v1]
+        cu_unit = 1.0026988039e-06
+        cpu_price = 7.43e-14
+        mem_price = 6.79e-24
+        io_in_price = 1e-06
+        io_out_price = 1e-06
+        traffic_price_0 = 9.19e-11
+        traffic_price_1 = 0
+        traffic_price_2 = 9.19e-11
+      nodeSelector:
+        matrixone.cloud/cluster-pool: freetier-01
+        matrixone.cloud/profile: cn.s8c64g
+      resources:
+        limits:
+          cpu: 6500m
+          memory: 56Gi
+        requests:
+          cpu: "2"
+          memory: 16Gi
+      storageClassName: openebs-hostpath
+      storageSize: 1800Gi
+      toleratedTaints:
+      - profile.matrixone.cloud/cn.s8c64g
+      - cluster-pool.matrixone.cloud/freetier-01
+    name: s8c64g
+    poolStrategy:
+      scaleStrategy:
+        maxIdle: 1
+      updateStrategy:
+        reclaimTimeout: 24h0m0s
+    profile: cn.s8c64g
+  cnSets:
+  - managed:
+      componentBackend: Claim
+      nodeSelector:
+        matrixone.cloud/cluster-pool: freetier-01
+        matrixone.cloud/profile: cn.s8c64g
+      resources:
+        limits:
+          cpu: 6500m
+          memory: 56Gi
+        requests:
+          cpu: "2"
+          memory: 16Gi
+      storageClassName: openebs-hostpath
+      storageSize: 1800Gi
+      toleratedTaints:
+      - profile.matrixone.cloud/cn.s8c64g
+      - cluster-pool.matrixone.cloud/freetier-01
+    name: shared-medium
+    profile: cn.s8c64g
+    replicas: 2
+    scalingConfig:
+      maxReplicas: 10
+      minReplicas: 2
+      policy: AutoScaling
+  dnSets:
+  - managed:
+      config: |
+        [observability.labelSelector]
+        role = "__MO_OB__"
+        [tn.rpc]
+        max-message-size = "2000M"
+      nodeSelector:
+        matrixone.cloud/cluster-pool: freetier-01
+        matrixone.cloud/profile: dn.small
+      resources:
+        limits:
+          cpu: "3"
+          memory: 28Gi
+        requests:
+          cpu: "3"
+          memory: 28Gi
+      sharedStorageCache:
+        diskCacheSize: 140Gi
+        memoryCacheSize: 5Gi
+      storageClassName: alicloud-disk-essd-pl1
+      storageSize: 200Gi
+      toleratedTaints:
+      - profile.matrixone.cloud/dn.small
+      - cluster-pool.matrixone.cloud/freetier-01
+    name: default
+    profile: dn.small
+    replicas: 1
+  endpoint:
+    mode: Dedicated
+    proxySpec:
+      image: registry.cn-hangzhou.aliyuncs.com/mocloud/matrixone:v3.0.0-a37aaf836-2026-04-21
+      managed:
+        config: |
+          [proxy.plugin]
+          timeout = "3s"
+          [observability.labelSelector]
+          role = "__MO_OB__"
+        profile: proxy.standard
+      pluginImage: registry.cn-hangzhou.aliyuncs.com/mocloud/plugin:0.11.0-17e89d6-2024-12-04
+      replicas: 2
+    whitelistIPRanges:
+    - 0.0.0.0/0
+  logSet:
+    managed:
+      config: |
+        [observability.labelSelector]
+        role = "__MO_OB__"
+        [logservice.rpc]
+        max-message-size = "2000M"
+        [logservice]
+        hakeeper-truncate-interval = "2h"
+      nodeSelector:
+        matrixone.cloud/cluster-pool: freetier-01
+        matrixone.cloud/profile: log.standard
+      resources:
+        limits:
+          cpu: "3"
+          memory: 6Gi
+        requests:
+          cpu: "3"
+          memory: 6Gi
+      storageClassName: alicloud-disk-essd-pl1
+      storageSize: 100Gi
+      toleratedTaints:
+      - profile.matrixone.cloud/log.standard
+      - cluster-pool.matrixone.cloud/freetier-01
+    name: default
+    profile: log.standard
+    replicas: 3
+  managed:
+    imageRepository: registry.cn-hangzhou.aliyuncs.com/mocloud/matrixone
+    localServiceRef:
+      name: local-service
+    objectStorage:
+      path: moc-backup-test/restore-dev-20260213235245
+      region: cn-hangzhou
+      restored: true
+  operatorVersion: v1.3.0
+  state: Active
+  unitName: unit-cn-hangzhou
+  unitSelector:
+    matchLabels:
+      matrixone.cloud/cloud: aliyun
+      matrixone.cloud/region: cn-hangzhou
+  upgradeStrategy:
+    components:
+    - name: proxy
+      needs:
+      - dn
+    - name: dn
+      needs:
+      - cn
+    - name: cn
+      needs:
+      - log
+    - name: log
+    upgradeSchema: true
+  version: v3.0.0-a37aaf836-2026-04-21
