@@ -14,6 +14,7 @@ docs/                 # 运维文档（FAQ、handbooks 等）
 third/mocloud-tester/ # mocloud-tester git submodule（仅供参考/分析，CI 中通过 checkout 拉取）
 third/matrixone-operator/ # matrixone-operator git submodule（仅供参考/分析）
 third/uni-agent/       # uni-agent git submodule（仅供参考/分析）
+third/gitops/          # gitops git submodule（仅供参考/分析）
 migrate-2.0.py        # MO-2.0 迁移脚本（依赖 mocloud-tester）
 run.sh                # 备份辅助脚本
 test.py               # 测试辅助脚本
