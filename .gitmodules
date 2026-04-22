@@ -1,0 +1,3 @@
+[submodule "third/mocloud-tester"]
+	path = third/mocloud-tester
+	url = git@github.com:matrixorigin/mocloud-tester.git

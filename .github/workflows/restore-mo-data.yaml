@@ -1,17 +1,23 @@
 name: Restore MO Data
 on:
-#   schedule:
-#     - cron: '0 0 * * *'
   workflow_dispatch:
     inputs:
-      env:
-        description: Target environment
+      backup_env:
+        description: 'Backup source environment (where data comes from)'
         required: true
         type: choice
         options:
-          - qa
+          - prod
           - dev
-        default: qa
+        default: prod
+      env:
+        description: 'Restore target environment (where data goes to)'
+        required: true
+        type: choice
+        options:
+          - dev
+          - qa
+        default: dev
       backup_s3_bucket:
         description: Backups to be made into the S3 bucket
         required: false
@@ -50,7 +56,7 @@ env:
   management_platform_url: ${{ secrets.MANAGEMENT_PLATFORM_URL }}
   management_platform_user: ${{ secrets.MANAGEMENT_PLATFORM_USER }}
   management_platform_password: ${{ secrets.MANAGEMENT_PLATFORM_PASSWORD }}
-  env: ${{ inputs.env || 'qa' }}
+  env: ${{ inputs.env || 'dev' }}
   provider: aliyun
   region: cn-hangzhou
   k8s_unit_config: ${{ secrets.K8S_UNIT_CONFIG }}
@@ -59,7 +65,7 @@ jobs:
     restore-data:
       runs-on: ubuntu-latest
       environment:
-        name: ${{ inputs.env || 'qa' }}
+        name: ${{ inputs.env || 'dev' }}
       timeout-minutes: 720
   
       steps:
@@ -80,9 +86,26 @@ jobs:
             cd $GITHUB_WORKSPACE
             python -m pip install --upgrade pip
             pip install -r requirements.txt
-  
-        - name: Restore MOC Data
-          id: restore
+
+        - name: Set Restore File Path
+          id: set-restore-path
+          run: |
+            if [ -n "${{ inputs.restore_s3_bucket_file_path }}" ]; then
+              echo "path=${{ inputs.restore_s3_bucket_file_path }}" >> $GITHUB_OUTPUT
+            else
+              BACKUP_ENV="${{ inputs.backup_env || 'prod' }}"
+              RESTORE_ENV="${{ inputs.env || 'dev' }}"
+              TS=$(date +%Y%m%d%H%M%S)
+              if [ "$BACKUP_ENV" = "dev" ] && [ "$RESTORE_ENV" = "dev" ]; then
+                echo "path=restore-dev2dev-${TS}" >> $GITHUB_OUTPUT
+              else
+                echo "path=restore-${RESTORE_ENV}-${TS}" >> $GITHUB_OUTPUT
+              fi
+            fi
+
+        - name: Restore MOC Data (from prod)
+          id: restore-prod
+          if: inputs.backup_env != 'dev'
           run: |
             cd $GITHUB_WORKSPACE
             export PYTHONPATH=$(pwd)
@@ -97,16 +120,32 @@ jobs:
             BACKUP_ID: ${{ inputs.backup_id || vars.BACKUP_ID }}
             RESTORE_CLUSTER: ${{ inputs.restore_cluster || 'only-restore-data' }}
             RESTORE_CLUSTER_VERSION: ${{ inputs.restore_cluster_version || vars.RESTORE_CLUSTER_VERSION }}
-            # RESTORE_ROOT_USERNAME: ${{ secrets.restore_root_username }}
-            # RESTORE_ROOT_PASSWORD: ${{ secrets.restore_root_password }}
             RESTORE_S3_BUCKET: ${{ inputs.restore_s3_bucket || vars.RESTORE_S3_BUCKET }}
-            RESTORE_S3_BUCKET_FILE_PATH: ${{ inputs.restore_s3_bucket_file_path || vars.RESTORE_S3_BUCKET_FILE_PATH }}
-            # MO_IMAGE_REPOSITORY: ${{ vars.MO_IMAGE_REPOSITORY }}
-            # MOC_PLUGIN_IMAGE: ${{ vars.MOC_PLUGIN_IMAGE }}
+            RESTORE_S3_BUCKET_FILE_PATH: ${{ steps.set-restore-path.outputs.path }}
           continue-on-error: true
-        
-        - name: Restore MOC Data Again
-          if: steps.restore.outcome == 'failure'
+
+        - name: Restore MOC Data (from dev)
+          id: restore-dev
+          if: inputs.backup_env == 'dev'
+          run: |
+            cd $GITHUB_WORKSPACE
+            export PYTHONPATH=$(pwd)
+            python src/upgrade/main.py restore --only-data
+          env:
+            BACKUP_ALIYUN_AK: ${{ secrets.RESTORE_ALIYUN_AK }}
+            BACKUP_ALIYUN_SK: ${{ secrets.RESTORE_ALIYUN_SK }}
+            RESTORE_ALIYUN_AK: ${{ secrets.RESTORE_ALIYUN_AK }}
+            RESTORE_ALIYUN_SK: ${{ secrets.RESTORE_ALIYUN_SK }}
+            BACKUP_S3_BUCKET: ${{ inputs.backup_s3_bucket || vars.DEV_BACKUP_S3_BUCKET }}
+            BACKUP_S3_BUCKET_FILE_PATH: ${{ inputs.backup_s3_bucket_file_path || vars.DEV_BACKUP_S3_BUCKET_FILE_PATH }}
+            BACKUP_ID: ${{ inputs.backup_id || vars.DEV_BACKUP_ID }}
+            RESTORE_CLUSTER: ${{ inputs.restore_cluster || 'only-restore-data' }}
+            RESTORE_CLUSTER_VERSION: ${{ inputs.restore_cluster_version || vars.RESTORE_CLUSTER_VERSION }}
+            RESTORE_S3_BUCKET: ${{ inputs.restore_s3_bucket || vars.RESTORE_S3_BUCKET }}
+            RESTORE_S3_BUCKET_FILE_PATH: ${{ steps.set-restore-path.outputs.path }}
+
+        - name: Restore MOC Data Again (from prod)
+          if: inputs.backup_env != 'dev' && steps.restore-prod.outcome == 'failure'
           run: |
             cd $GITHUB_WORKSPACE
             export PYTHONPATH=$(pwd)
@@ -122,7 +161,7 @@ jobs:
             RESTORE_CLUSTER: ${{ inputs.restore_cluster || 'only-restore-data' }}
             RESTORE_CLUSTER_VERSION: ${{ inputs.restore_cluster_version || vars.RESTORE_CLUSTER_VERSION }}
             RESTORE_S3_BUCKET: ${{ inputs.restore_s3_bucket || vars.RESTORE_S3_BUCKET }}
-            RESTORE_S3_BUCKET_FILE_PATH: ${{ inputs.restore_s3_bucket_file_path || vars.RESTORE_S3_BUCKET_FILE_PATH }}
+            RESTORE_S3_BUCKET_FILE_PATH: ${{ steps.set-restore-path.outputs.path }}
 
         - name: Upload Logs
           uses: actions/upload-artifact@v4
