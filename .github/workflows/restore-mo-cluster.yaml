@@ -15,7 +15,7 @@ on:
         required: true
         type: string
       restore_cluster:
-        description: Cluster name to create
+        description: Restore cluster name
         required: false
         type: string
         default: only-restore-data
