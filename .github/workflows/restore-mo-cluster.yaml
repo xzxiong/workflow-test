@@ -62,13 +62,8 @@ jobs:
             export PYTHONPATH=$(pwd)
             python src/upgrade/main.py restore --force
           env:
-            BACKUP_ALIYUN_AK: ${{ secrets.BACKUP_ALIYUN_AK }}
-            BACKUP_ALIYUN_SK: ${{ secrets.BACKUP_ALIYUN_SK }}
             RESTORE_ALIYUN_AK: ${{ secrets.RESTORE_ALIYUN_AK }}
             RESTORE_ALIYUN_SK: ${{ secrets.RESTORE_ALIYUN_SK }}
-            BACKUP_S3_BUCKET: ${{ vars.BACKUP_S3_BUCKET }}
-            BACKUP_S3_BUCKET_FILE_PATH: ${{ vars.BACKUP_S3_BUCKET_FILE_PATH }}
-            BACKUP_ID: ${{ vars.BACKUP_ID }}
             RESTORE_CLUSTER: ${{ inputs.restore_cluster || 'restore-2dev' }}
             RESTORE_CLUSTER_VERSION: ${{ inputs.restore_cluster_version || vars.MO_IMAGE_TAG }}
             RESTORE_S3_BUCKET: ${{ vars.RESTORE_S3_BUCKET }}
