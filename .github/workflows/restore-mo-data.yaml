@@ -73,7 +73,7 @@ jobs:
           uses: actions/checkout@v4
           with:
             repository: matrixorigin/mocloud-tester
-            ref: main
+            ref: xzxiong
             token: ${{ secrets.GH_PAT }}
   
         - name: Set Up Python3.11
@@ -132,6 +132,7 @@ jobs:
             export PYTHONPATH=$(pwd)
             python src/upgrade/main.py restore --only-data
           env:
+            ALIYUN_SECRET_NAME: aliyun-moc-backup-dev
             BACKUP_ALIYUN_AK: ${{ secrets.RESTORE_ALIYUN_AK }}
             BACKUP_ALIYUN_SK: ${{ secrets.RESTORE_ALIYUN_SK }}
             RESTORE_ALIYUN_AK: ${{ secrets.RESTORE_ALIYUN_AK }}

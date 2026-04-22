@@ -59,7 +59,7 @@ jobs:
           uses: actions/checkout@v4
           with:
             repository: matrixorigin/mocloud-tester
-            ref: main
+            ref: xzxiong
             token: ${{ secrets.GH_PAT }}
 
         - name: Set Up Python3.11
