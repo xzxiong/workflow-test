@@ -1,3 +1,9 @@
 [submodule "third/mocloud-tester"]
 	path = third/mocloud-tester
 	url = git@github.com:matrixorigin/mocloud-tester.git
+[submodule "third/matrixone-operator"]
+	path = third/matrixone-operator
+	url = git@github.com:matrixorigin/matrixone-operator.git
+[submodule "third/unit-agent"]
+	path = third/unit-agent
+	url = git@github.com:matrixorigin/unit-agent.git

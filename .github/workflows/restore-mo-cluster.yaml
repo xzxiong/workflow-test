@@ -10,18 +10,23 @@ on:
           - dev
           - qa
         default: dev
+      restore_s3_bucket:
+        description: 'Restore S3 bucket (where data was copied to)'
+        required: true
+        type: string
+        default: 'moc-backup-test'
       restore_s3_bucket_file_path:
         description: 'Restore S3 path (output of restore-mo-data workflow)'
         required: true
         type: string
       restore_cluster:
         description: Restore cluster name
-        required: false
+        required: true
         type: string
         default: restore-2dev
       restore_cluster_version:
-        description: MO version for the restored cluster
-        required: false
+        description: 'MO version for the restored cluster'
+        required: true
         type: string
 env:
   env: ${{ inputs.env || 'dev' }}
@@ -64,9 +69,9 @@ jobs:
           env:
             RESTORE_ALIYUN_AK: ${{ secrets.RESTORE_ALIYUN_AK }}
             RESTORE_ALIYUN_SK: ${{ secrets.RESTORE_ALIYUN_SK }}
-            RESTORE_CLUSTER: ${{ inputs.restore_cluster || 'restore-2dev' }}
-            RESTORE_CLUSTER_VERSION: ${{ inputs.restore_cluster_version || vars.MO_IMAGE_TAG }}
-            RESTORE_S3_BUCKET: ${{ vars.RESTORE_S3_BUCKET }}
+            RESTORE_CLUSTER: ${{ inputs.restore_cluster }}
+            RESTORE_CLUSTER_VERSION: ${{ inputs.restore_cluster_version }}
+            RESTORE_S3_BUCKET: ${{ inputs.restore_s3_bucket }}
             RESTORE_S3_BUCKET_FILE_PATH: ${{ inputs.restore_s3_bucket_file_path }}
             MO_IMAGE_REPOSITORY: ${{ vars.MO_IMAGE_REPOSITORY }}
             RESTORE_MOC_PLUGIN_TAG: ${{ vars.RESTORE_MOC_PLUGIN_TAG }}
