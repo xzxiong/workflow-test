@@ -10,16 +10,8 @@ on:
           - dev
           - qa
         default: dev
-      backup_s3_bucket:
-        description: Backup S3 bucket (source of data)
-        required: true
-        type: string
-      backup_s3_bucket_file_path:
-        description: Backup S3 bucket path
-        required: true
-        type: string
-      backup_id:
-        description: Backup ID
+      restore_s3_bucket_file_path:
+        description: 'Restore S3 path (output of restore-mo-data workflow)'
         required: true
         type: string
       restore_cluster:
@@ -29,17 +21,7 @@ on:
         default: only-restore-data
       restore_cluster_version:
         description: MO version for the restored cluster
-        required: true
-        type: string
-        default: 'nightly-9d616832a'
-      restore_s3_bucket:
-        description: Restore S3 bucket (where data was copied to)
-        required: true
-        type: string
-        default: 'moc-backup-test'
-      restore_s3_bucket_file_path:
-        description: Restore S3 bucket path (output of restore-mo-data)
-        required: true
+        required: false
         type: string
 env:
   env: ${{ inputs.env || 'dev' }}
@@ -84,12 +66,12 @@ jobs:
             BACKUP_ALIYUN_SK: ${{ secrets.BACKUP_ALIYUN_SK }}
             RESTORE_ALIYUN_AK: ${{ secrets.RESTORE_ALIYUN_AK }}
             RESTORE_ALIYUN_SK: ${{ secrets.RESTORE_ALIYUN_SK }}
-            BACKUP_S3_BUCKET: ${{ inputs.backup_s3_bucket }}
-            BACKUP_S3_BUCKET_FILE_PATH: ${{ inputs.backup_s3_bucket_file_path }}
-            BACKUP_ID: ${{ inputs.backup_id }}
-            RESTORE_CLUSTER: ${{ inputs.restore_cluster }}
+            BACKUP_S3_BUCKET: ${{ vars.BACKUP_S3_BUCKET }}
+            BACKUP_S3_BUCKET_FILE_PATH: ${{ vars.BACKUP_S3_BUCKET_FILE_PATH }}
+            BACKUP_ID: ${{ vars.BACKUP_ID }}
+            RESTORE_CLUSTER: ${{ inputs.restore_cluster || 'only-restore-data' }}
             RESTORE_CLUSTER_VERSION: ${{ inputs.restore_cluster_version || vars.MO_IMAGE_TAG }}
-            RESTORE_S3_BUCKET: ${{ inputs.restore_s3_bucket }}
+            RESTORE_S3_BUCKET: ${{ vars.RESTORE_S3_BUCKET }}
             RESTORE_S3_BUCKET_FILE_PATH: ${{ inputs.restore_s3_bucket_file_path }}
             MO_IMAGE_REPOSITORY: ${{ vars.MO_IMAGE_REPOSITORY }}
             RESTORE_MOC_PLUGIN_TAG: ${{ vars.RESTORE_MOC_PLUGIN_TAG }}
