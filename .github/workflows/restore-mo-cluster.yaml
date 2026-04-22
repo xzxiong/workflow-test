@@ -18,7 +18,7 @@ on:
         description: Restore cluster name
         required: false
         type: string
-        default: only-restore-data
+        default: restore-freetier-01
       restore_cluster_version:
         description: MO version for the restored cluster
         required: false
@@ -69,7 +69,7 @@ jobs:
             BACKUP_S3_BUCKET: ${{ vars.BACKUP_S3_BUCKET }}
             BACKUP_S3_BUCKET_FILE_PATH: ${{ vars.BACKUP_S3_BUCKET_FILE_PATH }}
             BACKUP_ID: ${{ vars.BACKUP_ID }}
-            RESTORE_CLUSTER: ${{ inputs.restore_cluster || 'only-restore-data' }}
+            RESTORE_CLUSTER: ${{ inputs.restore_cluster || 'restore-freetier-01' }}
             RESTORE_CLUSTER_VERSION: ${{ inputs.restore_cluster_version || vars.MO_IMAGE_TAG }}
             RESTORE_S3_BUCKET: ${{ vars.RESTORE_S3_BUCKET }}
             RESTORE_S3_BUCKET_FILE_PATH: ${{ inputs.restore_s3_bucket_file_path }}
