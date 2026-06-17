@@ -4,6 +4,26 @@ Study github workflow and test.
 
 ---
 
+# Restore MO Cluster 配置重点
+
+`restore-mo-cluster.yaml` 基于已拷贝的 S3 备份数据创建恢复集群。相比正常新建集群，restore 时有三个**关键差异配置**：
+
+| 配置项 | 作用 | 影响 |
+|--------|------|------|
+| `objectStorage.restored: true` | 告诉 operator 从备份恢复 | 跳过 bootstrap，直接加载 S3 数据启动 |
+| `objectStorage.path` 指向恢复路径 | 指定备份数据位置 | 集群从该路径读取数据文件 |
+| `initJobs` 条件跳过 | 不执行建表/load data | 避免覆盖已有备份数据 |
+
+Restore 完成后还会执行：
+- 调整 CN 副本数（ob-sys→0, s2-pool→3）
+- **触发 Global Checkpoint** 确保数据一致性
+- 重启 local-system-service 刷新状态
+- 更新 CU/Storage 计费起算时间
+
+详细文档：[docs/handbooks/restore-mo-cluster-config.md](docs/handbooks/restore-mo-cluster-config.md)
+
+---
+
 # Release Notes
 
 ## v1.0.0
