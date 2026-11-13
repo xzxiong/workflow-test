@@ -49,6 +49,16 @@ on:
         description: The S3 bucket path to restore
         required: false
         type: string
+      restore_parallelism:
+        description: Number of parallel restore file copies
+        required: false
+        type: number
+        default: 300
+      restore_timeout_hours:
+        description: Maximum time to wait for the restore data copy
+        required: false
+        type: number
+        default: 6
 env:
   normal_email_1: ${{ vars.UPGRADE_TEST_EMAIL }}
   normal_password_1: ${{ secrets.UPGRADE_TEST_PASSWORD }}
@@ -86,6 +96,27 @@ jobs:
             cd $GITHUB_WORKSPACE
             python -m pip install --upgrade pip
             pip install -r requirements.txt
+
+        - name: Configure Restore
+          run: |
+            python - <<'PY'
+            from pathlib import Path
+            import re
+            import yaml
+
+            config_path = Path("src/upgrade/upgrade-config.yaml")
+            config = yaml.safe_load(config_path.read_text())
+            config["moBackup"]["restore"]["parallelism"] = int("${{ inputs.restore_parallelism || 300 }}")
+            config_path.write_text(yaml.safe_dump(config, sort_keys=False))
+
+            consts_path = Path("src/upgrade/consts.py")
+            consts = consts_path.read_text()
+            replacement = f'RESTORE_MO_DATA_TIMEOUT = {int("${{ inputs.restore_timeout_hours || 6 }}")} * WAIT_ONE_HOUR'
+            consts, count = re.subn(r'^RESTORE_MO_DATA_TIMEOUT\s*=.*$', replacement, consts, count=1, flags=re.MULTILINE)
+            if count != 1:
+                raise RuntimeError("RESTORE_MO_DATA_TIMEOUT definition not found")
+            consts_path.write_text(consts)
+            PY
 
         - name: Set Restore File Path
           id: set-restore-path
