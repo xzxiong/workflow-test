@@ -50,10 +50,12 @@ on:
         required: false
         type: string
       restore_parallelism:
-        description: Number of parallel restore file copies
+        description: Number of parallel restore file copies; do not exceed 150 with the current 27Gi limit
         required: false
         type: number
-        default: 300
+        # OOM case (2026-11-13, run 43349070092): parallelism=300 with a 27Gi
+        # limit OOMKilled both restore attempts on the 16C32G backup node.
+        default: 150
       restore_timeout_hours:
         description: Maximum time to wait for the restore data copy
         required: false
@@ -106,7 +108,7 @@ jobs:
 
             config_path = Path("src/upgrade/upgrade-config.yaml")
             config = yaml.safe_load(config_path.read_text())
-            config["moBackup"]["restore"]["parallelism"] = int("${{ inputs.restore_parallelism || 300 }}")
+            config["moBackup"]["restore"]["parallelism"] = int("${{ inputs.restore_parallelism || 150 }}")
             config_path.write_text(yaml.safe_dump(config, sort_keys=False))
 
             consts_path = Path("src/upgrade/consts.py")
